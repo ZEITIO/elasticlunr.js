@@ -87,7 +87,8 @@ elasticlunr.version = "0.9.6";
 
 // only used this to make elasticlunr.js compatible with lunr-languages
 // this is a trick to define a global alias of elasticlunr
-global.lunr = elasticlunr;
+// Hotfix uncaught reference error
+window.lunr = elasticlunr;
 
 /*!
  * elasticlunr.utils
