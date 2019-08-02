@@ -418,20 +418,24 @@ elasticlunr.Pipeline.registeredFunctions = {};</code></pre>
           </table>
           <div class="description"><p>Runs the current list of functions that registered in the pipeline against the<br />input tokens.</p> </div>
           <pre><code class="language-javascript">elasticlunr.Pipeline.prototype.run = function (tokens) {
-  var out = [],
-      tokenLength = tokens.length,
-      pipelineLength = this._queue.length;
-
-  for (var i = 0; i &lt; tokenLength; i++) {
-    var token = tokens[i];
-
-    for (var j = 0; j &lt; pipelineLength; j++) {
-      token = this._queue[j](token, i, tokens);
-      if (token === void 0 || token === null) break;
-    };
-
-    if (token !== void 0 &amp;&amp; token !== null) out.push(token);
-  };
+  var out = tokens,
+    queue_length = this._queue.length;
+  for (var i = 0; i &lt; queue_length; i++) {
+    var pipeline_output = [];
+    for (var j = 0; j &lt; out.length; j++) {
+      var output = this._queue[i](out[j], j, out);
+      if (!Array.isArray(output)) output = [output];
+      for (var k = 0; k &lt; output.length; k++) {
+        if (output[k] !== null &amp;&amp; output[k] !== void 0) {
+          pipeline_output.push(output[k]);
+        }
+      }
+    }
+    for (var j = pipeline_output.length-1; j &gt;= 0; j--) {
+      if (pipeline_output[j] === &quot;&quot;) pipeline_output.splice(j, 1);
+    }
+    out = pipeline_output;
+  }
 
   return out;
 };</code></pre>
